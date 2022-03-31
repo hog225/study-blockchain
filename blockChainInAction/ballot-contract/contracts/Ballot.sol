@@ -21,17 +21,17 @@ contract Ballot {
     Phase public state = Phase.Init;
 
     modifier validPhase(Phase reqPhase) {
-        require(state == reqPhase);
+        require(state == reqPhase, "invalid Phase");
         _;
     }
 
     modifier onlyChair() {
-        require(msg.sender == chairperson);
+        require(msg.sender == chairperson, "not chair person");
         _;
     }
 
-    constructor (uint numProposals) {
-        chairperson = msg.sender;
+    constructor (uint numProposals) payable{
+        chairperson = payable(msg.sender);
         voters[chairperson].weight = 2;
         for (uint prop = 0; prop < numProposals; prop++) {
             proposals.push(Proposal(0));
@@ -46,16 +46,16 @@ contract Ballot {
         state = x;
     }
 
-    function register(address voter) public validPhase(Phase.Regs) onlyChair {
+    function register(address voter) public validPhase(Phase.Regs) onlyChair payable {
         require(! voters[voter].voted);
         voters[voter].weight = 1;
 
     }
 
-    function vote(uint toProposal) public validPhase(Phase.Vote) {
+    function vote(uint toProposal) public validPhase(Phase.Vote) payable {
         Voter memory sender = voters[msg.sender];
-        require (!sender.voted);
-        require (toProposal < proposals.length);
+        require (!sender.voted, "already voted");
+        require (toProposal < proposals.length, "invalid  proposal");
         sender.voted = true;
         //HYPERLINK "http//sender.vote/";
         sender.vote = toProposal;
@@ -71,7 +71,7 @@ contract Ballot {
                 winningProposal = prop;
             }
         }
-        assert(winningVoteCount >= 3);
+        require(winningVoteCount >= 3, "winningcount not enough");
     }
 
 }
