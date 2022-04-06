@@ -33,17 +33,18 @@
 
 ## 명령어 모음 
 1. npm install -g truffle
-2. truffle unbox drizzle - 프로젝트 생성 
-3. truffle version
-4. truffle compile --all
-5. truffle migrate 가나쉬에 배포 
-6. truffle networks 가나쉬에 배포된 토큰 주소 
-7. truffle console 
+2. truffle init -- smart contract 프로젝트 생성 
+3. truffle unbox drizzle - 프로젝트 생성 
+4. truffle version
+5. truffle compile --all
+6. truffle migrate 가나쉬에 배포 
+7. truffle networks 가나쉬에 배포된 토큰 주소 
+8. truffle console 
    1. const YGToken = await YGToken.at("배포된 토큰 주소" // 토큰 참조 
-8. truffle test
-9. truffle migrate --network development
-10. cd app && npm run start
-11. truffle console --network develop && exec ./send_u.js 
+9. truffle test
+10. truffle migrate --network development
+11. cd app && npm run start
+12. truffle console --network develop && exec ./send_u.js 
 
 
 ## 추가 모듈 
@@ -67,6 +68,11 @@
 2. address:  smart contract , balance 호출 가능 
 3. msg.sender : EOS 
 4. msg.value: 토큰 갯수 
+
+## 롭스텐
+1. 이더리움 블록체인을 구현한 퍼블릭 테스트 네트워크 
+2. 니모닉 개인키가 필요  (https://iancoleman.io/bip39/)
+
 
 
 
