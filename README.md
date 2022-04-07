@@ -1,5 +1,11 @@
 # 이더리움 Dapp
 
+## 프로젝트 구종 
+1. blockChainInAction
+   1. ballot-app, ballot-contract : 투표 
+   2. blindAuction : 블라인드 옥션
+2. testDapp 
+   1. Drizzle Box
 
 ## 코인 토큰 
 1. 이더리움은 공용 코인 
