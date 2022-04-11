@@ -4,6 +4,7 @@ import logo from "./logo.png";
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Accounts from "./components/Accounts";
+import Benefit from "./components/Benefit";
 const { AccountData, ContractData, ContractForm } = newContextComponents;
 
 
@@ -69,7 +70,7 @@ class MainComponent extends React.Component {
                 <ToastContainer />
                 <div>
                     <img src={logo} alt="drizzle-logo" />
-                    <h1>BENEFIT TOKEN</h1>
+                    <h1>BENEFIT TOKEN(ERC20)</h1>
                     <p>
                         Examples of how to get started with Drizzle in various situations.
                     </p>
@@ -165,6 +166,12 @@ class MainComponent extends React.Component {
                     <p>{`owner ${selectedAddress}`}</p>
                     <p>{`spender ${this.state.spender}`}</p>
                     <i> 대신 보낼 수량을 조회 한다. </i>
+
+                    <h3>Benefit</h3>
+                    <Benefit
+                        drizzle={this.props.drizzle}
+                        drizzleState={this.props.drizzleState}
+                    />
 
                 </div>
 

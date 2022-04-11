@@ -60,7 +60,10 @@
 
 ## Drizzle box 구성 
 1. app - 화면 react  
-2. app - src 
+2. contracts - 계약 
+3. 단점 
+   1. openZeppline 버전이 너무 낮은게 설치된다. erc 코드가 구 버전이라서 신 기능 사용 불가 
+   2. 그렇다고 openZeppline 을 올리기엔 뭔가 버그가 생길것 같은 느낌이 든다. 
 
 ## 트러블 슈트 
 1. 만약 app 이 안뜨면 metamask 에서 network 세팅을 해본다. 
@@ -78,6 +81,11 @@
 ## 롭스텐
 1. 이더리움 블록체인을 구현한 퍼블릭 테스트 네트워크 
 2. 니모닉 개인키가 필요  (https://iancoleman.io/bip39/)
+
+## test
+1. cd test
+2. truffle test testBenefitToken.js 
+3. --compile-none // compile 없이 
 
 
 
