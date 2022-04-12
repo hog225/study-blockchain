@@ -22,7 +22,7 @@ contract BenefitToken is ERC20 {
         Benefit benefit;
         Step states;
     }
-    Benefit[] private benefits;
+
     mapping(address => Benefit[]) private benefitLists;
     mapping(address => BenefitProgress[]) private benefitProgress;
     mapping(address => address[]) private benefitOffererOfRequestor;
@@ -50,7 +50,7 @@ contract BenefitToken is ERC20 {
     }
 
     function addBenefit(uint threshold, uint cost, string memory benefitText) public onlyTenTokenHolder {
-        require(benefitLists[msg.sender].length <= 5, "benefit max 5");
+        require(benefitLists[msg.sender].length < 5, "benefit max 5");
         benefitLists[msg.sender].push(Benefit({
             threshold: threshold,
             cost: cost,
@@ -68,28 +68,20 @@ contract BenefitToken is ERC20 {
 
     function requestBenefit(address offerer, uint benefitIdx) public {
         require(benefitLists[offerer].length > benefitIdx, "invalid index");
-        uint threshold = benefitLists[offerer][benefitIdx].threshold;
-        require(threshold < balanceOf(msg.sender));
-        uint i = 0;
-        for (i =0; i < 5; i++ ) {
-            if (benefitProgress[offerer][i].requestor == msg.sender) {
-                break;
-            }
-        }
+        require(benefitProgress[offerer].length < 5, "offerer handle max 5 offer");
+        require(benefitOffererOfRequestor[msg.sender].length < 5, "requster only request max 5");
+        require(benefitLists[offerer].length > 0, "offerer benefit null");
 
-        if (benefitProgress[offerer].length < 5) {
-            benefitProgress[offerer].push(BenefitProgress({
+        uint threshold = benefitLists[offerer][benefitIdx].threshold;
+        require(threshold < balanceOf(msg.sender), "insufficient coin");
+
+        benefitProgress[offerer].push(BenefitProgress({
             requestor: msg.sender,
             benefit: benefitLists[offerer][benefitIdx],
             states: Step.Req
-            }));
-            if (benefitOffererOfRequestor[msg.sender].length < 5)
-                benefitOffererOfRequestor[msg.sender].push(offerer);
-            else
-                revert("requester Max 5");
-        } else {
-            revert("offer Max 5");
-        }
+        }));
+        benefitOffererOfRequestor[msg.sender].push(offerer);
+
     }
 
     function acceptBenefit(address requestor) public onlyTenTokenHolder {

@@ -86,6 +86,7 @@
 1. cd test
 2. truffle test testBenefitToken.js 
 3. --compile-none // compile 없이 
+4. truffle test testBenefitToken.js --compile-none -g "requestBenefit" testname 으로 
 
 
 
