@@ -32,6 +32,7 @@ contract BenefitToken is ERC20 {
         require(balanceOf(msg.sender) >= 10, "please pocess more token ");
         _;
     }
+
     constructor() public {
         _mint(msg.sender, INITIAL_SUPPLY);
     }
@@ -84,44 +85,41 @@ contract BenefitToken is ERC20 {
 
     }
 
-    function acceptBenefit(address requestor) public onlyTenTokenHolder {
-        for (uint i =0; i < 5; i++ ) {
-            if ((benefitProgress[msg.sender][i].requestor == requestor) && (benefitProgress[msg.sender][i].states == Step.Req)) {
-                benefitProgress[msg.sender][i].states = Step.Accept;
-                break;
-            }
-        }
+    function acceptBenefit(address requestor, uint progressIndex) public onlyTenTokenHolder {
+        require(progressIndex < 5, "invalidIndex");
+        require(benefitProgress[msg.sender].length > progressIndex, "invalid index");
+        require(benefitProgress[msg.sender][progressIndex].requestor == requestor, "invalid Requestor");
+        require(benefitProgress[msg.sender][progressIndex].states == Step.Req, "invalid Req State");
+        benefitProgress[msg.sender][progressIndex].states = Step.Accept;
 
     }
 
-    function completeBenefit(address offerer) public {
-        uint i = 0;
+    function completeBenefit(address offerer, uint progressIndex) public {
         uint j = 0;
-        for (i =0; i < 5; i++ ) {
-            if ((benefitProgress[offerer][i].requestor == msg.sender) && (benefitProgress[offerer][i].states == Step.Accept)) {
-                //Benefit memory benefit = benefitProgress[offerer][i];
-                benefitProgress[offerer][i].states = Step.Accept;
-                if ( benefitProgress[offerer][i].benefit.cost > 0)
-                    transfer(offerer,  benefitProgress[offerer][i].benefit.cost);
+        require(benefitProgress[offerer].length > progressIndex, "invalid index");
+        require(benefitProgress[offerer][progressIndex].requestor == msg.sender, "requestor invalid");
+        require(benefitProgress[offerer][progressIndex].states == Step.Accept, "invalid Accept State");
+
+
+
+        if ( benefitProgress[offerer][progressIndex].benefit.cost > 0)
+            transfer(offerer,  benefitProgress[offerer][progressIndex].benefit.cost);
+
+
+        benefitProgress[offerer][progressIndex] = benefitProgress[offerer][benefitProgress[offerer].length - 1];
+        benefitProgress[offerer].pop();
+
+        for (j = 0; j < 5; j++) {
+            if (benefitOffererOfRequestor[msg.sender][j] == offerer) {
                 break;
             }
         }
-
-        if (i != 5) {
-            benefitProgress[offerer][i] = benefitProgress[offerer][benefitProgress[offerer].length - 1];
-            benefitProgress[offerer].pop();
-
-            for (j = 0; j < 5; j++) {
-                if (benefitOffererOfRequestor[msg.sender][j] == offerer) {
-                    break;
-                }
-            }
-            if (j != 5) {
-                benefitOffererOfRequestor[msg.sender][j] = benefitOffererOfRequestor[msg.sender][benefitOffererOfRequestor[msg.sender].length - 1];
-                benefitOffererOfRequestor[msg.sender].pop();
-            }
-
+        if (j != 5) {
+            benefitOffererOfRequestor[msg.sender][j] = benefitOffererOfRequestor[msg.sender][benefitOffererOfRequestor[msg.sender].length - 1];
+            benefitOffererOfRequestor[msg.sender].pop();
         }
+
+
     }
 
 }

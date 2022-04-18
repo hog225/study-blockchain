@@ -87,6 +87,7 @@
 2. truffle test testBenefitToken.js 
 3. --compile-none // compile 없이 
 4. truffle test testBenefitToken.js --compile-none -g "requestBenefit" testname 으로 
+5. transaction 이 없는 function 에 대해서만 .call() 을 쓸 수 있다. 
 
 
 

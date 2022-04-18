@@ -39,7 +39,7 @@ contract("BenefitToken", async accounts => {
         const benefits = await instance.getBenefits(accounts[0]);
         assert.equal(benefits.length, 4);
     });
-
+    // test code
     it("requestBenefit", async () => {
         const instance = await BenefitToken.deployed();
         await instance.addBenefit(10, 5, "phone");
@@ -49,17 +49,79 @@ contract("BenefitToken", async accounts => {
         await instance.transfer(accounts[2], 50);
 
         await instance.requestBenefit(accounts[0], 0, {from: accounts[1]});
-        await instance.requestBenefit.call(accounts[0], 1, {from: accounts[2]});
+        await instance.requestBenefit(accounts[0], 1, {from: accounts[2]});
 
         const offerProgress = await instance.getBenefitProgressOfOfferer()
         console.log(offerProgress[1])
         const requsterOfferProgress = await instance.getBenefitProgressOfRequestor.call({from: accounts[1]})
         console.log(requsterOfferProgress);
-
-        // const benefits = await instance.getBenefits(accounts[0]);
-        // console.log(benefits)
     });
-    // push 시 값이 추가가 안되는듯 ?
-    
+
+    it("acceptBenefit", async () => {
+        const instance = await BenefitToken.deployed();
+        await instance.addBenefit(10, 5, "phone");
+        await instance.addBenefit(20, 3, "meet");
+
+        await instance.transfer(accounts[1], 50);
+        await instance.transfer(accounts[2], 50);
+
+        await instance.requestBenefit(accounts[0], 0, {from: accounts[1]});
+        await instance.requestBenefit(accounts[0], 1, {from: accounts[2]});
+
+        await instance.acceptBenefit(accounts[2], 1);
+        const offerProgress = await instance.getBenefitProgressOfOfferer();
+        console.log(offerProgress)
+
+    });
+
+    it("acceptBenefitError", async () => {
+        const instance = await BenefitToken.new();
+        await instance.addBenefit(10, 5, "phone");
+        await instance.addBenefit(20, 3, "meet");
+
+        await instance.transfer(accounts[1], 50);
+        await instance.transfer(accounts[2], 50);
+
+        await instance.requestBenefit(accounts[0], 0, {from: accounts[1]});
+        await instance.requestBenefit(accounts[0], 1, {from: accounts[2]});
+
+
+        try {
+            await instance.acceptBenefit(accounts[2], 3);
+        } catch (e) {
+            var err = e;
+        }
+        assert.isOk(err instanceof Error, "invalid index")
+
+    });
+
+    it("completeBenefit", async () => {
+        const instance = await BenefitToken.new();
+        await instance.addBenefit(10, 5, "phone");
+        await instance.addBenefit(20, 3, "meet");
+
+        await instance.transfer(accounts[1], 50);
+        await instance.transfer(accounts[2], 50);
+        const balance = await instance.balanceOf(accounts[0]);
+
+        await instance.requestBenefit(accounts[0], 0, {from: accounts[1]});
+        await instance.requestBenefit(accounts[0], 1, {from: accounts[2]});
+
+        await instance.acceptBenefit(accounts[2], 1);
+        await instance.completeBenefit(accounts[0], 1, {from: accounts[2]});
+
+
+        const offerProgress = await instance.getBenefitProgressOfOfferer();
+        const requsterOfferProgress = await instance.getBenefitProgressOfRequestor.call({from: accounts[2]})
+        assert.equal(offerProgress.length, 1)
+        assert.equal(requsterOfferProgress.length, 0)
+
+        const afterBalance = await instance.balanceOf(accounts[0])
+        assert.equal(afterBalance.toNumber(), balance.toNumber() + 3)
+
+    });
+
+
+
 
 });
